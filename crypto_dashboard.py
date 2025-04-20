@@ -80,7 +80,18 @@ st.write(f"### 💰 {coin_data['name']} ({coin_data['symbol']})")
 st.metric("Price (USD)", f"${coin_data['price_usd']}", delta=f"{coin_data['percent_change_24h']}%")
 
 # ---- CANDLESTICK CHART (REAL OHLC FROM BINANCE) ----
-binance_symbol = f"{coin_data['symbol']}USDT"
+# Some symbols like BNB or USDC might not have a direct Binance match
+binance_symbol = f"{coin_data['symbol'].upper()}USDT"
+
+# Optional: override for common mismatches
+symbol_overrides = {
+    "IOTA": "IOTAUSDT",
+    "MIOTA": "IOTAUSDT",
+    "BCH": "BCHUSDT",
+    "USDC": "USDCUSDT",  # Sometimes may not be available
+}
+binance_symbol = symbol_overrides.get(coin_data["symbol"].upper(), binance_symbol)
+
 
 try:
     binance_url = "https://api.binance.com/api/v3/klines"
